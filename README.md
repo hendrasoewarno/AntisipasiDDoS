@@ -1,6 +1,50 @@
 # IPTABLES
 Pengendalian Server untuk membatasi serangan<br>
 <br>
+# Syn Flood Attack (a.k.a Half Open Attack)
+Merupakan salah satu modus DDoS serangan cepat yang bertujuan menghabiskan sumber daya koneksi TCP pada server, sehingga tidak dapat melayani koneksi lainnya. Pada koneksi normal klien akan mengajukan permintaan koneksi dengan mengirim paket SYN ke server, kemudian server mengenali permintaan ini dan mengirim SYN-ACK kembali ke klien dan menunggu jawaban ACK dari klien. Pada Syn Flood Attack klien mengirim banyak paket SYN tetapi tidak pernah merespon SYN-ACK, sehingga koneksi pada server menjadi gantung sampai timeout, sampai pada satu level server akan kehabisan sumber daya koneksi untuk melayani koneksi sah lainnya.<br>
+1. Mengaktifkan syncookies pada file /etc/sysctl.d/10-network-security.conf
+```
+net.ipv4.tcp_syncookies=1
+```
+2. Menggunakan iptables untuk koneksi per IP Address.
+```
+#batasi semua paket baru yang tidak ada SYN
+iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
+
+iptables -N syn_flood
+iptables -A INPUT -p tcp --syn -j syn_flood
+iptables -A syn_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
+iptables -A syn_flood -j LOG --log-prefix "SYN flood: "
+iptables -A syn_flood -j DROP
+```
+# Port Scanner
+```
+#batasi fragment package
+iptables -A INPUT -f -j DROP
+
+#membuat LOG SCAN DROP 
+iptables -N LOG_SCAN_DROP
+iptables -A LOG_SCAN_DROP -j LOG --log-prefix "INPUT:DROP: "
+iptables -A LOG_SCAN_DROP -j DROP
+
+#batasi semua NULL SCAN
+iptables -A INPUT -p tcp –tcp-flags ALL NONE -j LOG_SCAN_DROP
+
+#batasi XMAS SCAN
+iptables -A INPUT -p tcp –tcp-flags ALL ALL -j LOG_SCAN_DROP
+iptables -A INPUT -p tcp –tcp-flags ALL URG,PSH,FIN -j LOG_SCAN_DROP
+
+#batasi FIN SCAN
+iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j LOG_SCAN_DROP
+iptables -A INPUT -p tcp –tcp-flags ALL FIN -j LOG_SCAN_DROP
+iptables -A INPUT -p tcp –tcp-flags ALL SYN,FIN -j LOG_SCAN_DROP
+
+#batasi ACK SCAN
+iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j LOG_SCAN_DROP
+iptables -A INPUT -p tcp –tcp-flags ACK,PSH PSH -j LOG_SCAN_DROP
+iptables -A INPUT -p tcp –tcp-flags ACK,URG URG -j LOG_SCAN_DROP
+```
 Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server<br>
 1. Menerima koneksi pada beberapa port
 ```
@@ -38,53 +82,3 @@ iptables -A INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 15 --co
 ```
 iptables -A INPUT -p tcp !-s 192.168.0.8 --syn --dport 80 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
-# Syn Flood Attack (a.k.a Half Open Attack)
-Merupakan salah satu modus DDoS serangan cepat yang bertujuan menghabiskan sumber daya koneksi TCP pada server, sehingga tidak dapat melayani koneksi lainnya. Pada koneksi normal klien akan mengajukan permintaan koneksi dengan mengirim paket SYN ke server, kemudian server mengenali permintaan ini dan mengirim SYN-ACK kembali ke klien dan menunggu jawaban ACK dari klien. Pada Syn Flood Attack klien mengirim banyak paket SYN tetapi tidak pernah merespon SYN-ACK, sehingga koneksi pada server menjadi gantung sampai timeout, sampai pada satu level server akan kehabisan sumber daya koneksi untuk melayani koneksi sah lainnya.<br>
-1. Mengaktifkan syncookies pada file /etc/sysctl.d/10-network-security.conf
-```
-net.ipv4.tcp_syncookies=1
-```
-2. Menggunakan iptables untuk koneksi per IP Address.
-```
-#batasi semua paket baru yang tidak ada SYN
-iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
-
-iptables -N syn_flood
-iptables -A INPUT -p tcp --syn -j syn_flood
-iptables -A syn_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
-iptables -A syn_flood -j LOG --log-prefix "SYN flood: "
-iptables -A syn_flood -j DROP
-```
-# Port Scanner
-```
-#batasi fragment package
-iptables -A INPUT -f -j DROP
-
-#batasi semua NULL SCAN
-iptables -A INPUT -p tcp –tcp-flags ALL NONE -j LOG –log-prefix "NULL scan: "
-iptables -A INPUT -p tcp –tcp-flags ALL NONE -j DROP
-
-#batasi XMAS SCAN
-iptables -A INPUT -p tcp –tcp-flags ALL ALL -j LOG –log-prefix "XMAS scan: "
-iptables -A INPUT -p tcp –tcp-flags ALL ALL -j DROP
-iptables -A INPUT -p tcp –tcp-flags ALL URG,PSH,FIN -j LOG –log-prefix "NMAP-XMAS scan: "
-iptables -A INPUT -p tcp –tcp-flags ALL URG,PSH,FIN -j DROP
-
-#batasi FIN SCAN
-iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j LOG –log-prefix "FIN scan: "
-iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j DROP
-iptables -A INPUT -p tcp –tcp-flags ALL FIN -j LOG –log-prefix “FIN scan: ”
-iptables -A INPUT -p tcp –tcp-flags ALL FIN -j DROP
-iptables -A INPUT -p tcp –tcp-flags ALL SYN,FIN -j LOG –log-prefix "SYN-FIN scan: "
-iptables -A INPUT -p tcp –tcp-flags ALL SYN,FIN -j DROP
-
-#batasi ACK SCAN
-iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j LOG –log-prefix "ACK FIN scan: "
-iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j DROP
-iptables -A INPUT -p tcp –tcp-flags ACK,PSH PSH -j LOG –log-prefix "ACK PSH scan: "
-iptables -A INPUT -p tcp –tcp-flags ACK,PSH PSH -j DROP
-iptables -A INPUT -p tcp –tcp-flags ACK,URG URG -j LOG –log-prefix "ACK URG scan: "
-iptables -A INPUT -p tcp –tcp-flags ACK,URG URG -j DROP
-```
-
-sudo iptables -A INPUT -p tcp --tcp-flags ALL FIN,PSH,URG -m limit --limit 5/min -j LOG --log-prefix “<IPT> Xmas scan: “
