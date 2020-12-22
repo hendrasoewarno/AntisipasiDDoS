@@ -12,11 +12,26 @@ net.ipv4.tcp_syncookies=1
 #batasi semua paket baru yang tidak ada SYN
 iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
 
+#https://www.researchgate.net/publication/265181297_Mitigating_DoSDDoS_attacks_using_iptables
+#SYN FLOOD
 iptables -N syn_flood
 iptables -A INPUT -p tcp --syn -j syn_flood
 iptables -A syn_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
 iptables -A syn_flood -j LOG --log-prefix "SYN flood: "
 iptables -A syn_flood -j DROP
+
+#UDP FLOOD
+ptables -N udp_flood  
+iptables -A INPUT -p udp -j udp_flood  
+iptables -A udp_flood -m state –state NEW –m recent –update –seconds 1 –hitcount 10 -j RETURN  
+iptables -A syn_flood -j LOG --log-prefix "UDP flood: "
+iptables -A udp_flood -j DROP
+
+#ICMP FLOOD
+iptables -N icmp_flood  
+iptables -A INPUT -p icmp -j icmp_flood  
+iptables -A icmp_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
+iptables -A icmp_flood -j DROP
 ```
 # Port Scanner
 ```
@@ -45,6 +60,7 @@ iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j port_scan
 iptables -A INPUT -p tcp –tcp-flags ACK,PSH PSH -j port_scan
 iptables -A INPUT -p tcp –tcp-flags ACK,URG URG -j port_scan
 ```
+# Pembatasan lainnya
 Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server<br>
 1. Menerima koneksi pada beberapa port
 ```
