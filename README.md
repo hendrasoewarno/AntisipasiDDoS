@@ -24,26 +24,26 @@ iptables -A syn_flood -j DROP
 iptables -A INPUT -f -j DROP
 
 #membuat LOG SCAN DROP 
-iptables -N LOG_SCAN_DROP
-iptables -A LOG_SCAN_DROP -j LOG --log-prefix "INPUT:DROP: "
-iptables -A LOG_SCAN_DROP -j DROP
+iptables -N port_scan
+iptables -A port_scan -j LOG --log-prefix "Port Scanner: "
+iptables -A port_scan -j DROP
 
 #batasi semua NULL SCAN
-iptables -A INPUT -p tcp –tcp-flags ALL NONE -j LOG_SCAN_DROP
+iptables -A INPUT -p tcp –tcp-flags ALL NONE -j port_scan
 
 #batasi XMAS SCAN
-iptables -A INPUT -p tcp –tcp-flags ALL ALL -j LOG_SCAN_DROP
-iptables -A INPUT -p tcp –tcp-flags ALL URG,PSH,FIN -j LOG_SCAN_DROP
+iptables -A INPUT -p tcp –tcp-flags ALL ALL -j port_scan
+iptables -A INPUT -p tcp –tcp-flags ALL URG,PSH,FIN -j port_scan
 
 #batasi FIN SCAN
-iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j LOG_SCAN_DROP
-iptables -A INPUT -p tcp –tcp-flags ALL FIN -j LOG_SCAN_DROP
-iptables -A INPUT -p tcp –tcp-flags ALL SYN,FIN -j LOG_SCAN_DROP
+iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j port_scan
+iptables -A INPUT -p tcp –tcp-flags ALL FIN -j port_scan
+iptables -A INPUT -p tcp –tcp-flags ALL SYN,FIN -j port_scan
 
 #batasi ACK SCAN
-iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j LOG_SCAN_DROP
-iptables -A INPUT -p tcp –tcp-flags ACK,PSH PSH -j LOG_SCAN_DROP
-iptables -A INPUT -p tcp –tcp-flags ACK,URG URG -j LOG_SCAN_DROP
+iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j port_scan
+iptables -A INPUT -p tcp –tcp-flags ACK,PSH PSH -j port_scan
+iptables -A INPUT -p tcp –tcp-flags ACK,URG URG -j port_scan
 ```
 Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server<br>
 1. Menerima koneksi pada beberapa port
