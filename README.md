@@ -1,4 +1,4 @@
-# IPTABLES
+# Menangani DDoS dan Port Scanner
 Pengendalian Server untuk membatasi serangan<br>
 <br>
 # Syn Flood Attack (a.k.a Half Open Attack)
@@ -63,11 +63,15 @@ iptables -A INPUT -p tcp –tcp-flags ACK,URG URG -j port_scan
 ```
 # Pembatasan lainnya
 Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server<br>
-1. Menerima koneksi pada beberapa port
+1. Mengaktifkan Policy Deny pada INPUT Chain
+```
+iptables --policy INPUT DROP
+```
+2. Hanya Menerima koneksi pada beberapa port 80, 22 dan 53
 ```
 iptables -A INPUT -p tcp --match multiport --dports 80,22,53 -j ACCEPT
 ```
-2. Menolak koneksi dari IP Address tertentu
+3. Menolak koneksi dari IP Address tertentu
 ```
 iptables -A INPUT -s 192.168.252.12 -j DROP
 ```
