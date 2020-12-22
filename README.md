@@ -63,43 +63,54 @@ iptables -A INPUT -p tcp –tcp-flags ACK,URG URG -j port_scan
 ```
 # Pembatasan lainnya
 Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server<br>
-1. Mengaktifkan Policy Deny pada INPUT Chain
+1. Mengaktifkan Policy Deny pada INPUT Chain & FORWARD Chain
 ```
 iptables --policy INPUT DROP
+iptables --policy FORWARD DROP
+iptables --policy OUTPUT DROP
 ```
-2. Hanya Menerima koneksi pada beberapa port 80, 22 dan 53
+2. Menerima semua permintaan dari localloop
+```
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+```
+3. Memperbolehkan semua sesi koneksi yang sudah ESTABLISHED
+```
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+```
+4. Hanya Menerima koneksi pada beberapa port 80, 22 dan 53
 ```
 iptables -A INPUT -p tcp --match multiport --dports 80,22,53 -j ACCEPT
 ```
-3. Menolak koneksi dari IP Address tertentu
+5. Menolak koneksi dari IP Address tertentu
 ```
 iptables -A INPUT -s 192.168.252.12 -j DROP
 ```
-3. Menolak koneksi dari MAC Address tertentu
+6. Menolak koneksi dari MAC Address tertentu
 ```
 iptables -A INPUT -m mac --mac-source 00:0F:EA:91:04:08 -j DROP
 ```
-4. Menolak Ping pada interface tertentu
+7. Menolak Ping pada interface tertentu
 ```
 iptables -A INPUT -i eth1 -p icmp --icmp-type echo-request -j DROP
 ```
-5. Menolak koneksi dari IP Address tertentu pada interface tertentu
+8. Menolak koneksi dari IP Address tertentu pada interface tertentu
 ```
 iptables -A INPUT -i eth0 -s 192.168.252.12 -j DROP
 ```
-6. Menolak lebih dari 150 koneksi ke Server
+9. Menolak lebih dari 150 koneksi ke Server
 ```
 iptables -A INPUT -p tcp --syn -m connlimit --connlimit-above 150 -j REJECT --reject-with tcp-reset
 ```
-7. Menolak lebih dari 15 koneksi untuk satu IP Address (ditunjukan oleh --connlimit-mask 32)
+10. Menolak lebih dari 15 koneksi untuk satu IP Address (ditunjukan oleh --connlimit-mask 32)
 ```
 iptables -A INPUT -p tcp --syn -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
-8. Menolak lebih dari 15 koneksi ke port 80 untuk satu IP Address (ditujukan oleh --dport 80)
+11. Menolak lebih dari 15 koneksi ke port 80 untuk satu IP Address (ditujukan oleh --dport 80)
 ```
 iptables -A INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
-9. Menolak lebih dari 15 koneksi ke port 80 untuk satu IP Address dengan pengecualian sumber koneksi dari 192.168.0.8 (ditunjukan oleh !-s 192.168.0.8)
+12. Menolak lebih dari 15 koneksi ke port 80 untuk satu IP Address dengan pengecualian sumber koneksi dari 192.168.0.8 (ditunjukan oleh !-s 192.168.0.8)
 ```
 iptables -A INPUT -p tcp !-s 192.168.0.8 --syn --dport 80 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
