@@ -34,6 +34,7 @@ iptables -A icmp_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
 iptables -A icmp_flood -j DROP
 ```
 # Port Scanner
+Port Scanner merupakan aktvitas untuk mendapatkan informasi terkait dengan Open Port, Closed Port, dan Filtered Port.<br>
 ```
 #batasi fragment package
 iptables -A INPUT -f -j DROP
