@@ -52,6 +52,7 @@ iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
 iptables -N syn_flood
 iptables -A INPUT -p tcp --syn -j syn_flood
 iptables -A syn_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
+iptables -A syn_flood -j LOG --log-prefix "SYN flood: "
 iptables -A syn_flood -j DROP –log-level 6
 ```
 # Port Scanner
