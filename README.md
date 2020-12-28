@@ -132,13 +132,13 @@ pico /etc/apache2/conf.d/mod_evasive.conf
   DOSEmailNotify      you@yourdomain.com
   DOSLogDir           "/var/log/mod_evasive"
 ```
-Adapun penjelasan untuk masing-masing parameter adalah sebagai berikut:\
-1. DOSHashTableSize adalah ukuran top level node hash table yang dibutuhkan oleh mod_evasive, jika terlalu kecil, maka kinerja web menjadi rendah, disarankan untuk menggunakan ukuran yang besar untuk web yang memiliki load yang besar.\
-2. DOSPageCount adalah jumlah pemanggilan pada halaman yang sama untuk satu satuan waktu yang ditetapkan pada DOSPageInterval, jika angka ini dilampaui, maka akan mengembalikan 403 (Forbidden), dan IP di Blacklist selama DOSBlockingPeriod\
-3. DOSSitePageCount adalah jumlah pemanggilan pada website untuk satu satuan waktu yang ditetapkan pada DOSSiteInterval, jika angka ini dilampaui, maka akan mengembalikan 403 (Forbidden), dan IP di Blacklist  selama DOSBlockingPeriod.\
-4. DOSPageInterval adalah satuan waktu (detik) untuk perhitungan DOSPageCount.\
-5. DOSSiteInterval adalah satuan waktu (detik) untuk perhitungan DOSSiteCount.\
-6. DOSBlockingPeriod adalah satuan waktu (detik) untuk blacklist IP.\
+Adapun penjelasan untuk masing-masing parameter adalah sebagai berikut:<br>
+1. DOSHashTableSize adalah ukuran top level node hash table yang dibutuhkan oleh mod_evasive, jika terlalu kecil, maka kinerja web menjadi rendah, disarankan untuk menggunakan ukuran yang besar untuk web yang memiliki load yang besar.<br>
+2. DOSPageCount adalah jumlah pemanggilan pada halaman yang sama untuk satu satuan waktu yang ditetapkan pada DOSPageInterval, jika angka ini dilampaui, maka akan mengembalikan 403 (Forbidden), dan IP di Blacklist selama DOSBlockingPeriod.<br>
+3. DOSSitePageCount adalah jumlah pemanggilan pada website untuk satu satuan waktu yang ditetapkan pada DOSSiteInterval, jika angka ini dilampaui, maka akan mengembalikan 403 (Forbidden), dan IP di Blacklist  selama DOSBlockingPeriod.<br>
+4. DOSPageInterval adalah satuan waktu (detik) untuk perhitungan DOSPageCount.<br>
+5. DOSSiteInterval adalah satuan waktu (detik) untuk perhitungan DOSSiteCount.<br>
+6. DOSBlockingPeriod adalah satuan waktu (detik) untuk blacklist IP.<br>
 dan buatlah folder untuk menampung mod_evasive
 ```
 mkdir /var/log/apache2/mod_evasive
