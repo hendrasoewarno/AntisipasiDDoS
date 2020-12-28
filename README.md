@@ -153,7 +153,7 @@ Lakukan instalasi software Benchmark Apache untuk melakukan pengujian
 ```
 apt-get install apache2-utils
 ```
-dan kita akan mensimulasikan serangan Dos
+dan kita akan mensimulasikan serangan Dos untuk melihat efektivitas dari setting Mod_Evasive
 ```
 ab -n 100 -c 10 http://localhost/index.html
 tail /var/log/syslog
