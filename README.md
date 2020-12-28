@@ -114,5 +114,37 @@ iptables -A INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 15 --co
 ```
 iptables -A INPUT -p tcp !-s 192.168.0.8 --syn --dport 80 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
-#Instalasi Mod-Evasive
-Mod-Evasive adalah module tambahan pada Apache2 untuk mencegah serangan DDoS pada level aplikasi Web. 
+# Instalasi Mod-Evasive
+Mod-Evasive adalah module tambahan pada Apache2 untuk mencegah serangan DDoS pada level aplikasi Web.
+```
+apt-get install libapache2-mod-evasive
+```
+Selanjutnya adalah melakukan konfigurasi mod_evasive dengan membuat file:
+```
+pico /etc/apache2/conf.d/mod_evasive.conf
+  DOSHashTableSize    2048
+  DOSPageCount        5
+  DOSSiteCount        100
+  DOSPageInterval     1
+  DOSSiteInterval     2
+  DOSBlockingPeriod   10
+
+  DOSEmailNotify      you@yourdomain.com
+  DOSLogDir           "/var/log/mod_evasive"
+```
+Adapun penjelasan untuk masing-masing parameter adalah sebagai berikut:\
+1. DOSHashTableSize adalah ukuran top level node hash table yang dibutuhkan oleh mod_evasive, jika terlalu kecil, maka kinerja web menjadi rendah, disarankan untuk menggunakan ukuran yang besar untuk web yang memiliki load yang besar.\
+2. DOSPageCount adalah jumlah pemanggilan pada halaman yang sama untuk satu satuan waktu yang ditetapkan pada DOSPageInterval, jika angka ini dilampaui, maka akan mengembalikan 403 (Forbidden), dan IP di Blacklist selama DOSBlockingPeriod\
+3. DOSSitePageCount adalah jumlah pemanggilan pada website untuk satu satuan waktu yang ditetapkan pada DOSSiteInterval, jika angka ini dilampaui, maka akan mengembalikan 403 (Forbidden), dan IP di Blacklist  selama DOSBlockingPeriod.\
+4. DOSPageInterval adalah satuan waktu (detik) untuk perhitungan DOSPageCount.\
+5. DOSSiteInterval adalah satuan waktu (detik) untuk perhitungan DOSSiteCount.\
+6. DOSBlockingPeriod adalah satuan waktu (detik) untuk blacklist IP.\
+dan buatlah folder untuk menampung mod_evasive
+```
+mkdir /var/log/apache2/mod_evasive
+```
+dan aktifkan module mod_evasive
+```
+a2enmod mod_evasive
+service apache2 restart
+```
