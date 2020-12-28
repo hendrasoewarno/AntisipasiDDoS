@@ -149,6 +149,11 @@ dan aktifkan module mod_evasive
 a2enmod mod_evasive
 service apache2 restart
 ```
+jalan program test.pl yang disediakan untuk mengetest apakah mod_evasive telah berfungsi:
+```
+perl /usr/share/doc/libapache2-mod-evasive/examples/test.pl
+```
+Maka akan tampil HTTP/1.1 403 Forbidden<br>
 Lakukan instalasi software Benchmark Apache untuk melakukan pengujian
 ```
 apt-get install apache2-utils
