@@ -114,7 +114,7 @@ iptables -A INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 15 --co
 ```
 iptables -A INPUT -p tcp !-s 192.168.0.8 --syn --dport 80 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
-# Instalasi Mod-Evasive
+# Menangani DDos pada Apache dengan Mod-Evasive
 Mod-Evasive adalah module tambahan pada Apache2 untuk mencegah serangan DDoS pada level aplikasi Web.
 ```
 apt-get install libapache2-mod-evasive
