@@ -141,10 +141,22 @@ Adapun penjelasan untuk masing-masing parameter adalah sebagai berikut:<br>
 6. DOSBlockingPeriod adalah satuan waktu (detik) untuk blacklist IP.<br>
 dan buatlah folder untuk menampung mod_evasive
 ```
-mkdir /var/log/apache2/mod_evasive
+mkdir /var/log/mod_evasive
+chown www-data /var/log/mod_evasive
 ```
 dan aktifkan module mod_evasive
 ```
 a2enmod mod_evasive
 service apache2 restart
 ```
+Lakukan instalasi software Benchmark Apache untuk melakukan pengujian
+```
+apt-get install apache2-utils
+```
+dan kita akan mensimulasikan serangan Dos
+```
+ab -n 100 -c 10 http://localhost/index.html
+tail /var/log/syslog
+tail /var/log/apache2/access.log
+```
+dan akan tampil bahwa ip 127.0.0.1 kena blacklist pada syslog, dan 403 pada access.log
