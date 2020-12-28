@@ -1,5 +1,5 @@
-# Menangani DDoS dan Port Scanner
-Pengendalian Server untuk membatasi serangan<br>
+# Menangani  Distributed Denial of Service (DDoS) dan Port Scanner
+Pengendalian Server untuk membatasi serangan DDos adalah penting, tetapi secara umum serangan DDoS adalah sulit untuk ditangani, karena menyangkut kepada layanan dari server, terutama serangan DDoS pada layer aplikasi. Pada tulisan ini adalah membahas terkait dengan menangani Flooding pada Port, UDP dan ICMP.<br>
 <br>
 # Syn Flood Attack (a.k.a Half Open Attack)
 Merupakan salah satu modus DDoS serangan cepat yang bertujuan menghabiskan sumber daya koneksi TCP pada server, sehingga tidak dapat melayani koneksi lainnya. Pada koneksi normal klien akan mengajukan permintaan koneksi dengan mengirim paket SYN ke server, kemudian server mengenali permintaan ini dan mengirim SYN-ACK kembali ke klien dan menunggu jawaban ACK dari klien. Pada Syn Flood Attack klien mengirim banyak paket SYN tetapi tidak pernah merespon SYN-ACK, sehingga koneksi pada server menjadi gantung sampai timeout, sampai pada satu level server akan kehabisan sumber daya koneksi untuk melayani koneksi sah lainnya.<br>
@@ -62,7 +62,7 @@ iptables -A INPUT -p tcp –tcp-flags ACK,PSH PSH -j port_scan
 iptables -A INPUT -p tcp –tcp-flags ACK,URG URG -j port_scan
 ```
 # Pembatasan lainnya
-Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server<br>
+Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server sampai kepada pembahasan jumlah kokensi per-IPAddress ataupun per-IPAddress per Port<br>
 1. Mengaktifkan Policy Deny pada INPUT Chain & FORWARD Chain
 ```
 iptables --policy INPUT DROP
@@ -114,3 +114,5 @@ iptables -A INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 15 --co
 ```
 iptables -A INPUT -p tcp !-s 192.168.0.8 --syn --dport 80 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
+#Instalasi Mod-Evasive
+Mod-Evasive adalah module tambahan pada Apache2 untuk mencegah serangan DDoS pada level aplikasi Web. 
