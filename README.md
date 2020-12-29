@@ -115,6 +115,15 @@ iptables -A INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 15 --co
 iptables -A INPUT -p tcp !-s 192.168.0.8 --syn --dport 80 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
 Selain -A (add) anda dapat juga menggunakan -I (insert), jika -A menambahkan rule baru pada akhir, sedangkan -I menambahkan rule diawal daftar.
+kemudian untuk menampilkan daftar rule aktif pada firewall:
+```
+iptables -L --line-number
+iptabkes -L INPUT --line-number
+```
+dan untuk menghapus rule tertentu berdasarkan nomor baris 1
+```
+iptables -D INPUT 1
+```
 # Menangani DDos pada Apache dengan Mod-Evasive
 Mod-Evasive adalah module tambahan pada Apache2 untuk mencegah serangan DDoS pada level aplikasi Web.
 ```
