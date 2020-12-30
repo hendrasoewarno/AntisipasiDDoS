@@ -45,21 +45,22 @@ iptables -A port_scan -j LOG --log-prefix "Port Scanner: "
 iptables -A port_scan -j DROP
 
 #batasi semua NULL SCAN
-iptables -A INPUT -p tcp –tcp-flags ALL NONE -j port_scan
+iptables -A INPUT -p tcp --tcp-flags ALL NONE -j port_scan
 
 #batasi XMAS SCAN
-iptables -A INPUT -p tcp –tcp-flags ALL ALL -j port_scan
-iptables -A INPUT -p tcp –tcp-flags ALL URG,PSH,FIN -j port_scan
+iptables -A INPUT -p tcp --tcp-flags ALL ALL -j port_scan
+iptables -A INPUT -p tcp --tcp-flags ALL URG,PSH,FIN -j port_scan
+iptables -A INPUT -p tcp --tcp-flags ALL FIN,PSH,URG -j DROP
 
 #batasi FIN SCAN
-iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j port_scan
-iptables -A INPUT -p tcp –tcp-flags ALL FIN -j port_scan
-iptables -A INPUT -p tcp –tcp-flags ALL SYN,FIN -j port_scan
+iptables -A INPUT -p tcp --tcp-flags ACK,FIN FIN -j port_scan
+iptables -A INPUT -p tcp --tcp-flags ALL FIN -j port_scan
+iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN -j port_scan
 
 #batasi ACK SCAN
-iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j port_scan
-iptables -A INPUT -p tcp –tcp-flags ACK,PSH PSH -j port_scan
-iptables -A INPUT -p tcp –tcp-flags ACK,URG URG -j port_scan
+iptables -A INPUT -p tcp --tcp-flags ACK,FIN FIN -j port_scan
+iptables -A INPUT -p tcp --tcp-flags ACK,PSH PSH -j port_scan
+iptables -A INPUT -p tcp --tcp-flags ACK,URG URG -j port_scan
 
 #batasi NMAP-ID SCAN
 iptables -A INPUT -p tcp –tcp-flags ALL URG,PSH,SYN,FIN -j port_scan
