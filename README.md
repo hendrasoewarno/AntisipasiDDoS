@@ -60,6 +60,10 @@ iptables -A INPUT -p tcp –tcp-flags ALL SYN,FIN -j port_scan
 iptables -A INPUT -p tcp –tcp-flags ACK,FIN FIN -j port_scan
 iptables -A INPUT -p tcp –tcp-flags ACK,PSH PSH -j port_scan
 iptables -A INPUT -p tcp –tcp-flags ACK,URG URG -j port_scan
+
+#batasi NMAP-ID SCAN
+iptables -A INPUT -p tcp –tcp-flags ALL URG,PSH,SYN,FIN -j port_scan
+iptables -A INPUT -p tcp –tcp-flags SYN,RST SYN,RST -j port_scan
 ```
 # Pembatasan lainnya
 Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server sampai kepada pembahasan jumlah kokensi per-IPAddress ataupun per-IPAddress per Port<br>
