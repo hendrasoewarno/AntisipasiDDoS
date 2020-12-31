@@ -119,6 +119,11 @@ iptables -A INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 15 --co
 ```
 iptables -A INPUT -p tcp !-s 192.168.0.8 --syn --dport 80 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
+13. Menolak empty package ke port 80
+```
+iptables -I INPUT -p tcp --dport 80 -m length --length 20 -j DROP
+iptables -I INPUT -p tcp --dport 80 -m length --length 32 -j DROP
+```
 Selain -A (add) anda dapat juga menggunakan -I (insert), jika -A menambahkan rule baru pada akhir, sedangkan -I menambahkan rule diawal daftar.
 kemudian untuk menampilkan daftar rule aktif pada firewall:
 ```
