@@ -83,9 +83,9 @@ iptables -A OUTPUT -o lo -j ACCEPT
 ```
 iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 ```
-4. Hanya Menerima koneksi pada beberapa port 80, 22 dan 53
+4. Hanya Menerima koneksi pada beberapa port 25 (SMTP Relay), 443 (HTTPS), 587 (SMTP TLS), 995 (POPS TLS)
 ```
-iptables -A INPUT -p tcp --match multiport --dports 80,22,53 -j ACCEPT
+iptables -A INPUT -p tcp --match multiport --dports 25, 443, 587, 995 -j ACCEPT
 ```
 5. Menolak koneksi dari IP Address tertentu
 ```
@@ -111,18 +111,22 @@ iptables -A INPUT -p tcp --syn -m connlimit --connlimit-above 150 -j REJECT --re
 ```
 iptables -A INPUT -p tcp --syn -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
-11. Menolak lebih dari 15 koneksi ke port 80 untuk satu IP Address (ditujukan oleh --dport 80)
+11. Menolak lebih dari 15 koneksi ke port 443 untuk satu IP Address (ditujukan oleh --dport 80)
 ```
-iptables -A INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
+iptables -A INPUT -p tcp --syn --dport 443 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
-12. Menolak lebih dari 15 koneksi ke port 80 untuk satu IP Address dengan pengecualian sumber koneksi dari 192.168.0.8 (ditunjukan oleh !-s 192.168.0.8)
+12. Menolak lebih dari 15 koneksi ke port 443 untuk satu IP Address dengan pengecualian sumber koneksi dari 192.168.0.8 (ditunjukan oleh !-s 192.168.0.8)
 ```
-iptables -A INPUT -p tcp !-s 192.168.0.8 --syn --dport 80 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
+iptables -A INPUT -p tcp !-s 192.168.0.8 --syn --dport 443 -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
-13. Menolak empty package ke port 80
+13. Menolak empty package ke port 443
 ```
-iptables -I INPUT -p tcp --dport 80 -m length --length 20 -j DROP
-iptables -I INPUT -p tcp --dport 80 -m length --length 32 -j DROP
+iptables -I INPUT -p tcp --dport 443 -m length --length 20 -j DROP
+iptables -I INPUT -p tcp --dport 443 -m length --length 32 -j DROP
+```
+14. Menolak lebih dari 2 koneksi ke port 587, 995 untuk satu IP Address dari interface eth0 (internet)
+```
+iptables -A INPUT -i eth0 -p tcp --syn --dports 587, 995 -m connlimit --connlimit-above 2 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
 Selain -A (add) anda dapat juga menggunakan -I (insert), jika -A menambahkan rule baru pada akhir, sedangkan -I menambahkan rule diawal daftar.
 kemudian untuk menampilkan daftar rule aktif pada firewall:
