@@ -126,7 +126,7 @@ iptables -I INPUT -p tcp --dport 443 -m length --length 32 -j DROP
 ```
 14. Menolak lebih dari 2 koneksi ke port 587, 995 untuk satu IP Address dari interface eth0 (internet)
 ```
-iptables -A INPUT -i eth0 -p tcp --syn --dports 587, 995 -m connlimit --connlimit-above 2 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
+iptables -A INPUT -i eth0 -p tcp --syn --match multiport --dports 587, 995 -m connlimit --connlimit-above 2 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
 Selain -A (add) anda dapat juga menggunakan -I (insert), jika -A menambahkan rule baru pada akhir, sedangkan -I menambahkan rule diawal daftar.
 kemudian untuk menampilkan daftar rule aktif pada firewall:
