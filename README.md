@@ -33,6 +33,7 @@ iptables -A INPUT -p icmp -j icmp_flood
 iptables -A icmp_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
 iptables -A icmp_flood -j DROP
 ```
+Fungsi dari perintah iptables -N adalah membuat suatu chain baru, sehingga lebih mudah dimaintain seperti iptables -L syn_flood, maupun iptables -F syn_flood
 # Port Scanner
 Port Scanner merupakan aktvitas untuk mendapatkan informasi terkait dengan Open Port, Closed Port, dan Filtered Port.<br>
 ```
