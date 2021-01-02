@@ -71,7 +71,6 @@ iptables -A INPUT -p tcp --tcp-flags ALL FIN -j port_scan
 iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN -j port_scan
 
 #batasi ACK SCAN
-iptables -A INPUT -p tcp --tcp-flags ACK,FIN FIN -j port_scan
 iptables -A INPUT -p tcp --tcp-flags ACK,PSH PSH -j port_scan
 iptables -A INPUT -p tcp --tcp-flags ACK,URG URG -j port_scan
 
