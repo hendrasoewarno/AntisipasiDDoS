@@ -16,24 +16,32 @@ iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
 #SYN FLOOD
 iptables -N syn_flood
 iptables -A INPUT -p tcp --syn -j syn_flood
+#menggunakan module limit dengan token bucket diperbolehkan maksimal 3 packet dengan flag sync per detik
 iptables -A syn_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
+#jika diatas 3 packet akan di LOG dan di DROP
 iptables -A syn_flood -j LOG --log-prefix "SYN flood: "
 iptables -A syn_flood -j DROP
 
 #UDP FLOOD
-ptables -N udp_flood  
+iptables -N udp_flood
 iptables -A INPUT -p udp -j udp_flood  
 iptables -A udp_flood -m state –state NEW –m recent –update –seconds 1 –hitcount 10 -j RETURN  
 iptables -A syn_flood -j LOG --log-prefix "UDP flood: "
 iptables -A udp_flood -j DROP
 
-#ICMP FLOOD
+#ICMP FLOOD/Smurf Attack
 iptables -N icmp_flood  
-iptables -A INPUT -p icmp -j icmp_flood  
+iptables -A INPUT -p icmp -j icmp_flood
+#menggunakan module limit dengan token bucket diperbolehkan maksimal 3 packet icmp per detik
 iptables -A icmp_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
+#jika diatas 3 packet akan di LOG dan di DROP
+iptables -A syn_flood -j LOG --log-prefix "ICMP flood: "
 iptables -A icmp_flood -j DROP
+
+#OR BLOCK ALL ICMP
+#iptables -A INPUT -p icmp -j DROP
 ```
-Fungsi dari perintah iptables -N adalah membuat suatu chain baru, sehingga lebih mudah dimaintain seperti iptables -L syn_flood, maupun iptables -F syn_flood
+Fungsi dari perintah iptables -N adalah membuat suatu chain baru, sehingga lebih mudah dimaintain seperti iptables -L syn_flood, maupun iptables -F syn_flood, dan kemudian hasil log dapat dilihat pada /var/log/kern.log.
 # Port Scanner
 Port Scanner merupakan aktvitas untuk mendapatkan informasi terkait dengan Open Port, Closed Port, dan Filtered Port.<br>
 ```
