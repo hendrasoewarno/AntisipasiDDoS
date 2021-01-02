@@ -16,11 +16,13 @@ iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
 #SYN FLOOD
 iptables -N syn_flood
 iptables -A INPUT -p tcp --syn -j syn_flood
-#menggunakan module limit dengan token bucket diperbolehkan maksimal 3 packet dengan flag sync per detik
+#menggunakan module limit dengan token bucket berkapasitas maksimal 3 packet dan kemampuan pengisian kembali adalah 1 token per 1 detik
 iptables -A syn_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
 #jika diatas 3 packet akan di LOG dan di DROP
 iptables -A syn_flood -j LOG --log-prefix "SYN flood: "
 iptables -A syn_flood -j DROP
+#misalkan adalah serangan syn_flood 100 packet perdetik, dan adalah 6000 packet/menit
+#dengan aturan tersebut diatas, maka packet yang dapat diterima adalah 3+59 = 62 packet/menit, sisanya akan di LOG dan DROP
 
 #UDP FLOOD
 iptables -N udp_flood
@@ -32,11 +34,13 @@ iptables -A udp_flood -j DROP
 #ICMP FLOOD/Smurf Attack
 iptables -N icmp_flood  
 iptables -A INPUT -p icmp -j icmp_flood
-#menggunakan module limit dengan token bucket diperbolehkan maksimal 3 packet icmp per detik
+#menggunakan module limit dengan token bucket berkapasitas maksimal 3 packet dan kemampuan pengisian kembali adalah 1 token per 1 detik
 iptables -A icmp_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
 #jika diatas 3 packet akan di LOG dan di DROP
 iptables -A syn_flood -j LOG --log-prefix "ICMP flood: "
 iptables -A icmp_flood -j DROP
+#misalkan adalah serangan icmp_flood 100 packet perdetik, dan adalah 6000 packet/menit
+#dengan aturan tersebut diatas, maka packet yang dapat diterima adalah 3+59 = 62 packet/menit, sisanya akan di LOG dan DROP
 
 #OR BLOCK ALL ICMP
 #iptables -A INPUT -p icmp -j DROP
