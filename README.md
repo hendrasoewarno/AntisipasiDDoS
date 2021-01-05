@@ -151,4 +151,4 @@ dan untuk menghapus rule tertentu berdasarkan nomor baris 1
 iptables -D INPUT 1
 ```
 # Kesimpulan
-Upaya menghadapi DoS pada level firewall adalah menggunakan strategy membatasi jumlah koneksi ke Port tertentu per Ip Address, sampai dengan menyediakan suatu bucket token dengan kapasitas terbatas dan kapasitas yang terpakai akan dipulihkan sejumlah tertentu per-satuan waktu, jika kapasitas token habis maka permintaan koneksi akan ditolak sampai kapasitas yang memadai tersedia untuk melayani permintaan per-satuan waktu.
+Upaya menghadapi DoS pada level firewall adalah menggunakan strategy membatasi jumlah koneksi ke Port tertentu per Ip Address. Pendekatan yang lain adalah dengan menyediakan suatu bucket token yang memiliki kapasitas terbatas dan token yang terpakai akan dipulihkan kembali dengan laju sejumlah token tertentu per-satuan waktu, jika token yang tersedia habis maka permintaan koneksi akan ditolak sampai kapasitas yang memadai tersedia kembali.
