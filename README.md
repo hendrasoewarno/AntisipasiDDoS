@@ -79,12 +79,12 @@ iptables -A INPUT -p tcp –tcp-flags ALL URG,PSH,SYN,FIN -j port_scan
 iptables -A INPUT -p tcp –tcp-flags SYN,RST SYN,RST -j port_scan
 ```
 # Pembatasan lainnya
-Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server sampai kepada pembahasan jumlah kokensi per-IPAddress ataupun per-IPAddress per Port<br>
+Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server sampai kepada pembahasan jumlah koneksi per-IPAddress ataupun per-IPAddress per Port<br>
 1. Mengaktifkan Policy Deny pada INPUT Chain & FORWARD Chain
 ```
 iptables --policy INPUT DROP
 iptables --policy FORWARD DROP
-iptables --policy OUTPUT DROP
+iptables --policy OUTPUT ACCEPT
 ```
 2. Menerima semua permintaan dari localloop
 ```
@@ -150,4 +150,5 @@ dan untuk menghapus rule tertentu berdasarkan nomor baris 1
 ```
 iptables -D INPUT 1
 ```
-
+# Kesimpulan
+Upaya menghadapi DoS pada level firewall adalah menggunakan strategy membatasi jumlah koneksi ke Port tertentu per Ip Address, sampai dengan menyediakan suatu bucket token dengan kapasitas terbatas dan kapasitas yang terpakai akan dipulihkan sejumlah tertentu per-satuan waktu, jika kapasitas token habis maka permintaan koneksi akan ditolak sampai kapasitas yang memadai tersedia untuk melayani permintaan per-satuan waktu.
