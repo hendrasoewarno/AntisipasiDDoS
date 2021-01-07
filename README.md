@@ -7,7 +7,7 @@ Merupakan salah satu modus DDoS serangan cepat yang bertujuan menghabiskan sumbe
 ```
 net.ipv4.tcp_syncookies=1
 ```
-2. Menggunakan iptables untuk koneksi per IP Address.
+2. Menggunakan iptables pembatasan
 ```
 #batasi semua paket baru yang tidak ada SYN
 iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
@@ -16,18 +16,41 @@ iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
 #SYN FLOOD
 iptables -N syn_flood
 iptables -A INPUT -p tcp --syn -j syn_flood
-#menggunakan module limit dengan token bucket berkapasitas maksimal 3 packet dan kemampuan pengisian kembali adalah 1 token per 1 detik
-iptables -A syn_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
-#jika diatas 3 packet akan di LOG dan di DROP
+#menggunakan module limit dengan token bucket berkapasitas awal dan maksimal 50 packet dan kemampuan pengisian kembali adalah 25 token per 1 detik
+iptables -A syn_flood -m limit --limit 25/s --limit-burst 50 -j RETURN
+#jika bucket full maka akan di LOG
 iptables -A syn_flood -j LOG --log-prefix "SYN flood: "
-iptables -A syn_flood -j DROP
-#misalkan adalah serangan syn_flood 100 packet perdetik, dan adalah 6000 packet/menit
-#dengan aturan tersebut diatas, maka packet yang dapat diterima adalah 3+59 = 62 packet/menit, sisanya akan di LOG dan DROP
+#jika ingin dilanjutkan dengan drop, silakan di un-remark rule berikut ini
+#iptables -A syn_flood -j DROP
+#misalkan adalah serangan syn_flood 100 packet perdetik dari semua ipaddress, dan adalah 6000 packet/menit
+#dengan aturan tersebut diatas, maka packet yang dapat diterima adalah 50+(25*60) = 1550 packet/menit, sisanya akan di LOG dan (DROP kalau diaktifkan)
+#atau dengan kata lain:
+#pada detik 1, 100 packet tiba dan langsung membuat bucket yang berkapasitas 50 full, dan sisanya 50 akan di lanjutkan ke LOG dan DROP
+#pada detik 2, bucket diisi kembali dengan 25 token, dan 100 packet tiba, dan bucket penuh kembali, dan sisanya 75 alan dilanjutkan ke LOG dan DROP
+#dst
+    
+#https://making.pusher.com/per-ip-rate-limiting-with-iptables/
+#jika ingin pembatasan adalah per IP Address, maka adalah menggunakan hashlimit
+#SYN FLOOD PER IP Address
+iptables -N syn_flood_ipaddress
+iptables -A INPUT -p tcp --syn -j syn_flood_ipaddress
+#menggunakan module limit dengan token bucket berkapasitas awal dan maksimal 50 packet per ipaddress dan kemampuan pengisian kembali adalah 25 token per 1 detik
+iptables -A syn_flood_ipaddress -m hashlimit --hashlimit-mode srcip --hashlimit-upto 25/sec --hashlimitburst 50 --hashlimit-name syn_flood_rate_limit -j RETURN
+#jika bucket full maka akan di LOG
+iptables -A syn_flood_ipaddress -j LOG --log-prefix "SYN flood: "
+#jika ingin dilanjutkan dengan drop, silakan di un-remark rule berikut ini
+#iptables -A syn_flood_ipaddress -j DROP
+#misalkan adalah serangan syn_flood 100 packet perdetik dari satu ipaddress, dan adalah 6000 packet/menit
+#dengan aturan tersebut diatas, maka packet yang dapat diterima adalah 50+(25*60) = 1550 packet/menit, sisanya akan di LOG dan (DROP kalau diaktifkan)
+#atau dengan kata lain:
+#pada detik 1, 100 packet tiba dan langsung membuat bucket yang berkapasitas 50 full, dan sisanya 50 akan di lanjutkan ke LOG dan DROP
+#pada detik 2, bucket diisi kembali dengan 25 token, dan 100 packet tiba, dan bucket penuh kembali, dan sisanya 75 alan dilanjutkan ke LOG dan DROP
+#dst
 
 #UDP FLOOD
 iptables -N udp_flood
 iptables -A INPUT -p udp -j udp_flood  
-iptables -A udp_flood -m state –state NEW –m recent –update –seconds 1 –hitcount 10 -j RETURN  
+iptables -A udp_flood -m state --state NEW –m recent --update --seconds 1 --hitcount 10 -j RETURN  
 iptables -A syn_flood -j LOG --log-prefix "UDP flood: "
 iptables -A udp_flood -j DROP
 
