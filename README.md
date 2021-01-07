@@ -53,7 +53,7 @@ iptables -A INPUT -p udp -j udp_flood
 iptables -A udp_flood -m state --state NEW –m recent --update --seconds 1 --hitcount 10 -j RETURN  
 iptables -A syn_flood -j LOG --log-prefix "UDP flood: "
 iptables -A udp_flood -j DROP
-#membatasi lebih dari 3 koneksi UDP per detik
+#membatasi maksimal 10 koneksi UDP baru per detik
 
 #ICMP FLOOD/Smurf Attack
 iptables -N icmp_flood  
