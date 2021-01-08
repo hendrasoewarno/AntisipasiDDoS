@@ -144,6 +144,10 @@ iptables -A INPUT -i eth0 -s 192.168.252.12 -j DROP
 ```
 iptables -A INPUT -p tcp --syn -m connlimit --connlimit-above 150 -j REJECT --reject-with tcp-reset
 ```
+10. Menolak lebih dari 35 koneksi dari IP Address kelas C (ditunjukan oleh --connlimit-mask 192.0.0.0/24 )
+```
+iptables -A INPUT -p tcp --syn -m connlimit --connlimit-above 35 --connlimit-mask 192.0.0.0/24 -j REJECT --reject-with tcp-reset
+```
 10. Menolak lebih dari 15 koneksi untuk satu IP Address (ditunjukan oleh --connlimit-mask 32)
 ```
 iptables -A INPUT -p tcp --syn -m connlimit --connlimit-above 15 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
