@@ -23,7 +23,7 @@ iptables -A syn_flood -j LOG --log-prefix "SYN flood: "
 #jika ingin dilanjutkan dengan drop, silakan di un-remark rule berikut ini
 #iptables -A syn_flood -j DROP
 #misalkan adalah serangan syn_flood 100 packet perdetik dari semua ipaddress, dan adalah 6000 packet/menit
-#dengan aturan tersebut diatas, maka packet yang dapat diterima adalah 50+(25*60) = 1550 packet/menit, sisanya akan di LOG dan (DROP kalau diaktifkan)
+#dengan aturan tersebut diatas, maka packet yang dapat diterima adalah 50+(25*59) = 1525 packet pada menit pertama, sisanya akan di LOG dan (DROP kalau diaktifkan)
 #atau dengan kata lain:
 #pada detik 1, 100 packet tiba dan langsung membuat bucket yang berkapasitas 50 full, dan sisanya 50 akan di lanjutkan ke LOG dan DROP
 #pada detik 2, bucket diisi kembali dengan 25 token, dan 100 packet tiba, dan bucket penuh kembali, dan sisanya 75 alan dilanjutkan ke LOG dan DROP
@@ -41,7 +41,7 @@ iptables -A syn_flood_ipaddress -j LOG --log-prefix "SYN flood: "
 #jika ingin dilanjutkan dengan drop, silakan di un-remark rule berikut ini
 #iptables -A syn_flood_ipaddress -j DROP
 #misalkan adalah serangan syn_flood 100 packet perdetik dari satu ipaddress, dan adalah 6000 packet/menit
-#dengan aturan tersebut diatas, maka packet yang dapat diterima adalah 50+(25*60) = 1550 packet/menit, sisanya akan di LOG dan (DROP kalau diaktifkan)
+#dengan aturan tersebut diatas, maka packet yang dapat diterima adalah 50+(25*59) = 1525 packet pada menit pertama , sisanya akan di LOG dan (DROP kalau diaktifkan)
 #atau dengan kata lain:
 #pada detik 1, 100 packet tiba dan langsung membuat bucket yang berkapasitas 50 full, dan sisanya 50 akan di lanjutkan ke LOG dan DROP
 #pada detik 2, bucket diisi kembali dengan 25 token, dan 100 packet tiba, dan bucket penuh kembali, dan sisanya 75 alan dilanjutkan ke LOG dan DROP
