@@ -79,6 +79,7 @@ iptables -A INPUT -f -j DROP
 #membuat LOG SCAN DROP 
 iptables -N port_scan
 iptables -A port_scan -j LOG --log-prefix "Port Scanner: "
+#DROP akan dilihat sebagai Filtered pada nmap (DENY -> close)
 iptables -A port_scan -j DROP
 
 #batasi semua NULL SCAN
