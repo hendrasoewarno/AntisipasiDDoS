@@ -207,10 +207,10 @@ echo 655361  > /proc/sys/net/ipv4/netfilter/ip_conntrack_max
 # Kombinasi ipset dan iptables
 ```
 apt-get install ipset
-ipset -N blacklist iphash
-ipset -A blacklist 1.1.1.1
-ipset -A blacklist 2.2.2.2
-iptables -A INPUT -m set --set blacklist src -j DROP
+ipset -N black_list iphash
+ipset -A black_list 1.1.1.1
+ipset -A black_list 2.2.2.2
+iptables -A INPUT -m set --set black_list src -j DROP
 ```
 adalah setara dengan
 ```
@@ -220,6 +220,13 @@ iptables -A INPUT -s 2.2.2.2 -j DROP
 Jika ingin hapus ipaddress tertentu dari ipset
 ```
 ipset -D blacklist 1.1.1.1
+```
+# Banned alamat IP yang melakukan scan
+Misalkan server kita tidak membuka layanan Telnet(23), tetapi ada client yang mencoba meminta koneksi ke port 23, sehingga dinyakini bahwa client adalah mencoba melakukan scan terhadap server, sehingga segera diblacklist.
+```
+ipset -N banned_hosts iphash
+iptables -A INPUT -p tcp --dport 23 -j SET --add-set banned_hosts src
+iptables -A INPUT -m set --set banned_hosts src -j DROP
 ```
 # Kesimpulan
 Upaya menghadapi DoS pada level firewall adalah menggunakan strategy membatasi jumlah koneksi ke Port tertentu per Ip Address. Pendekatan yang lain adalah dengan menyediakan suatu bucket token yang memiliki kapasitas terbatas dan token yang terpakai akan dipulihkan kembali dengan laju sejumlah token tertentu per-satuan waktu, jika token yang tersedia habis maka permintaan koneksi akan ditolak sampai kapasitas yang memadai tersedia kembali.
