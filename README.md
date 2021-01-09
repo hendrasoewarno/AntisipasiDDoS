@@ -47,6 +47,14 @@ iptables -A syn_flood_ipaddress -j LOG --log-prefix "SYN flood: "
 #pada detik 2, bucket diisi kembali dengan 25 token, dan 100 packet tiba, dan bucket penuh kembali, dan sisanya 75 alan dilanjutkan ke LOG dan DROP
 #dst
 
+#https://kb.mazebolt.com/knowledgebase/urg-syn-flood/
+iptables -A INPUT -p tcp --tcp-flags URG,SYN URG,SYN -j LOG --log-prefix "URG-SYN flood: "
+iptables -A INPUT -p tcp --tcp-flags URG,SYN URG,SYN -j DROP
+
+#https://kb.mazebolt.com/knowledgebase/urg-psh-syn-flood/
+iptables -A INPUT -p tcp --tcp-flags URG,PSH,SYN URG,PSH,SYN -j LOG --log-prefix "URG-PSH-SYN flood: "
+iptables -A INPUT -p tcp --tcp-flags URG,PSH,SYN URG,PSH,SYN -j DROP
+
 #UDP FLOOD
 iptables -N udp_flood
 iptables -A INPUT -p udp -j udp_flood  
