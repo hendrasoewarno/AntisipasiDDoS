@@ -224,9 +224,9 @@ ipset -D blacklist 1.1.1.1
 # Banned alamat IP yang melakukan scan
 Misalkan server kita tidak membuka layanan Telnet(23), tetapi ada client yang mencoba meminta koneksi ke port 23, sehingga dinyakini bahwa client adalah mencoba melakukan scan terhadap server, sehingga segera diblacklist.
 ```
-ipset -N banned_hosts iphash
-iptables -A INPUT -p tcp --dport 23 -j SET --add-set banned_hosts src
-iptables -A INPUT -m set --set banned_hosts src -j DROP
+ipset -N banned_list iphash
+iptables -A INPUT -p tcp --dport 23 -j SET --add-set banned_list src
+iptables -A INPUT -m set --set banned_list src -j DROP
 ```
 # Kesimpulan
 Upaya menghadapi DoS pada level firewall adalah menggunakan strategy membatasi jumlah koneksi ke Port tertentu per Ip Address. Pendekatan yang lain adalah dengan menyediakan suatu bucket token yang memiliki kapasitas terbatas dan token yang terpakai akan dipulihkan kembali dengan laju sejumlah token tertentu per-satuan waktu, jika token yang tersedia habis maka permintaan koneksi akan ditolak sampai kapasitas yang memadai tersedia kembali.
