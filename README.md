@@ -222,7 +222,7 @@ Jika ingin hapus ipaddress tertentu dari ipset
 ipset -D blacklist 1.1.1.1
 ```
 # Banned alamat IP yang melakukan scan
-Misalkan server kita tidak membuka layanan Telnet(23), tetapi ada client yang mencoba meminta koneksi ke port 23, sehingga dinyakini bahwa client adalah mencoba melakukan scan terhadap server, sehingga segera diblacklist.
+Misalkan server kita tidak membuka layanan Telnet(23), tetapi ada client yang mencoba meminta koneksi ke port 23, sehingga dinyakini bahwa client adalah mencoba melakukan scan terhadap server, sehingga segera dimasukan ke data alamat yang di banned.
 ```
 ipset -N banned_list iphash
 iptables -A INPUT -p tcp --dport 23 -j SET --add-set banned_list src
