@@ -207,10 +207,10 @@ echo 655361  > /proc/sys/net/ipv4/netfilter/ip_conntrack_max
 # Kombinasi ipset dan iptables
 ```
 apt-get install ipset
-ipset -N myset iphash
-ipset -A myset 1.1.1.1
-ipset -A myset 2.2.2.2
-iptables -A INPUT -m set --set myset src -j DROP
+ipset -N blacklist iphash
+ipset -A blacklist 1.1.1.1
+ipset -A blacklist 2.2.2.2
+iptables -A INPUT -m set --set blacklist src -j DROP
 ```
 adalah setara dengan
 ```
@@ -219,7 +219,7 @@ iptables -A INPUT -s 2.2.2.2 -j DROP
 ```
 Jika ingin hapus ipaddress tertentu dari ipset
 ```
-ipset -D myset 1.1.1.1
+ipset -D blacklist 1.1.1.1
 ```
 # Kesimpulan
 Upaya menghadapi DoS pada level firewall adalah menggunakan strategy membatasi jumlah koneksi ke Port tertentu per Ip Address. Pendekatan yang lain adalah dengan menyediakan suatu bucket token yang memiliki kapasitas terbatas dan token yang terpakai akan dipulihkan kembali dengan laju sejumlah token tertentu per-satuan waktu, jika token yang tersedia habis maka permintaan koneksi akan ditolak sampai kapasitas yang memadai tersedia kembali.
