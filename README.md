@@ -221,6 +221,7 @@ Jika ingin hapus ipaddress tertentu dari ipset
 ```
 ipset -D blacklist 1.1.1.1
 ```
+jika muncul pesan module ip_set not found, maka dapat diartikan bahwa kernel anda tidak mendukung module ip_set, sehingga anda perlu mengkompilasi kernel dengan mengaktifkan module ip_set.
 # Banned alamat IP yang melakukan scan
 Misalkan server kita tidak membuka layanan Telnet(23), tetapi ada client yang mencoba meminta koneksi ke port 23, sehingga dinyakini bahwa client adalah mencoba melakukan scan terhadap server, sehingga segera dimasukan ke data alamat yang di banned.
 ```
