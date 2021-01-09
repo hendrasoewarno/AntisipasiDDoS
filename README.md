@@ -187,5 +187,18 @@ dan untuk menghapus rule tertentu berdasarkan nomor baris 1
 ```
 iptables -D INPUT 1
 ```
+# ip_conntrack: table full, dropping packet
+Jika anda mengalami pesan ip_conntrack: table full, dropping packet setelah melakukan setting tersebut diatas, maka berarti perlu memeriksa keberadaan setting nilai ip_contract
+```
+cat /proc/sys/net/ipv4/ip_conntrack_max
+atau
+cat /proc/sys/net/ipv4/netfilter/ip_conntrack_max
+```
+Kemudian lakukan perubahan nilai setting
+```
+echo 655361  > /proc/sys/net/ipv4/ip_conntrack_max
+atau
+echo 655361  > /proc/sys/net/ipv4/netfilter/ip_conntrack_max
+```
 # Kesimpulan
 Upaya menghadapi DoS pada level firewall adalah menggunakan strategy membatasi jumlah koneksi ke Port tertentu per Ip Address. Pendekatan yang lain adalah dengan menyediakan suatu bucket token yang memiliki kapasitas terbatas dan token yang terpakai akan dipulihkan kembali dengan laju sejumlah token tertentu per-satuan waktu, jika token yang tersedia habis maka permintaan koneksi akan ditolak sampai kapasitas yang memadai tersedia kembali.
