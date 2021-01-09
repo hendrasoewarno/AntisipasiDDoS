@@ -177,6 +177,10 @@ iptables -I INPUT -p tcp --dport 443 -m length --length 32 -j DROP
 ```
 iptables -A INPUT -i eth0 -p tcp --syn --match multiport --dports 587, 995 -m connlimit --connlimit-above 2 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
+15. 
+```
+iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m hashlimit --hashlimit-name SSH --hashlimit-above 5/min --hashlimit-mode srcip -j REJECT
+```
 Selain -A (add) anda dapat juga menggunakan -I (insert), jika -A menambahkan rule baru pada akhir, sedangkan -I menambahkan rule diawal daftar.
 kemudian untuk menampilkan daftar rule aktif pada firewall:
 ```
@@ -199,6 +203,23 @@ Kemudian lakukan perubahan nilai setting
 echo 655361  > /proc/sys/net/ipv4/ip_conntrack_max
 atau
 echo 655361  > /proc/sys/net/ipv4/netfilter/ip_conntrack_max
+```
+# Kombinasi ipset dan iptables
+```
+apt-get install ipset
+ipset -N myset iphash
+ipset -A myset 1.1.1.1
+ipset -A myset 2.2.2.2
+iptables -A INPUT -m set --set myset src -j DROP
+```
+adalah setara dengan
+```
+iptables -A INPUT -s 1.1.1.1 -j DROP
+iptables -A INPUT -s 2.2.2.2 -j DROP
+```
+Jika ingin hapus ipaddress tertentu dari ipset
+```
+ipset -D myset 1.1.1.1
 ```
 # Kesimpulan
 Upaya menghadapi DoS pada level firewall adalah menggunakan strategy membatasi jumlah koneksi ke Port tertentu per Ip Address. Pendekatan yang lain adalah dengan menyediakan suatu bucket token yang memiliki kapasitas terbatas dan token yang terpakai akan dipulihkan kembali dengan laju sejumlah token tertentu per-satuan waktu, jika token yang tersedia habis maka permintaan koneksi akan ditolak sampai kapasitas yang memadai tersedia kembali.
