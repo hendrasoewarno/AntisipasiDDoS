@@ -222,6 +222,33 @@ Jika ingin hapus ipaddress tertentu dari ipset
 ipset -D blacklist 1.1.1.1
 ```
 jika muncul pesan module ip_set not found, maka dapat diartikan bahwa kernel anda tidak mendukung module ip_set, sehingga anda perlu mengkompilasi kernel dengan mengaktifkan module ip_set.
+# Kompilasi ulang kernel Linux
+Dalam hal ini penulis menggunakan ubuntu 9.04 dengan kernel-2.6.26 yang tidak mendukung module ipset, untuk itu kita perlu mendownload kernel.2.6.39.4.
+```
+apt-get install kernel-package libncurses5-dev fakeroot wget bzip2
+cd /usr/src
+wget https://launchpad.net/linux/2.6.39/2.6.39.4/+download/linux-2.6.39.4.tar.gz
+tar xvf linux-2.6.39.4.tar.gz
+ln -s linux-2.6.39.4.tar.gz linux
+cd linux
+#duplikasi konfigurasi dari kernel saat ini
+cp /boot/config-`uname -r` ./.config
+make menuconfig
+
+#aktifkan setting ipset
+[*] Networking support  --->
+    Networking options  --->
+    [*] Network packet filtering framework (Netfilter) --->
+        <M>  IP set support --->
+
+as well as
+             Core Netfilter Configuration --->       
+                <M>  set target and match support
+
+make-kpkg clean
+fakeroot make-kpkg --initrd --append-to-version=-mw4 kernel_image kernel_headers
+
+```
 # Banned alamat IP yang melakukan scan
 Misalkan server kita tidak membuka layanan Telnet(23), tetapi ada client yang mencoba meminta koneksi ke port 23, sehingga dinyakini bahwa client adalah mencoba melakukan scan terhadap server, sehingga segera dimasukan ke data alamat yang di banned.
 ```
