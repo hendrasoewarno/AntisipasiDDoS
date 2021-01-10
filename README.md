@@ -246,7 +246,7 @@ as well as
                 <M>  set target and match support
 
 make-kpkg clean
-fakeroot make-kpkg --initrd --append-to-version=-mw4 kernel_image kernel_headers
+fakeroot make-kpkg --initrd kernel_image kernel_headers
 
 ```
 # Banned alamat IP yang melakukan scan
