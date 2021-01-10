@@ -244,10 +244,16 @@ make menuconfig
 as well as
              Core Netfilter Configuration --->       
                 <M>  set target and match support
-
-make-kpkg clean
-fakeroot make-kpkg --initrd kernel_image kernel_headers
-
+make clean
+make
+make modules
+make modules_install
+make install
+#membuat initramfs
+cd /boot
+sudo mkinitramfs -ko initrd.img-3.16.1 3.16.1
+#update grub
+update-grub
 ```
 # Banned alamat IP yang melakukan scan
 Misalkan server kita tidak membuka layanan Telnet(23), tetapi ada client yang mencoba meminta koneksi ke port 23, sehingga dinyakini bahwa client adalah mencoba melakukan scan terhadap server, sehingga segera dimasukan ke data alamat yang di banned.
