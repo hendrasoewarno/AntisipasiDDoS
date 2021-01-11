@@ -247,6 +247,7 @@ as well as
 make clean
 make
 make modules
+make firmware
 make modules_install
 make firmware_install
 make install
