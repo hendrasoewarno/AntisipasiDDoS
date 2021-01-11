@@ -248,6 +248,7 @@ make clean
 make
 make modules
 make modules_install
+make firmware_install
 make install
 #membuat initramfs
 cd /boot
