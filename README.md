@@ -253,7 +253,7 @@ make firmware_install
 make install
 #membuat initramfs
 cd /boot
-sudo mkinitramfs -ko initrd.img-3.16.1 3.16.1
+sudo mkinitramfs -ko initrd.img-2.6.39.4 2.6.39.4
 #update grub
 update-grub
 ```
