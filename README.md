@@ -107,6 +107,7 @@ iptables -A INPUT -p tcp --tcp-flags ACK,PSH PSH -j port_scan
 iptables -A INPUT -p tcp --tcp-flags ACK,URG URG -j port_scan
 ```
 Bagaimana dengan NMAP scan? NMap menggunakan pendekatan yang halus, yaitu mengakhiri koneksi dengan RST (SYN, SYN=-ACK, RST), sehingga koneksi tidak direkam oleh system operasi target.
+Bagaimana dengan Server Windows? Server Windows akan merespon NULL Scan, FIN Scan dan XMas Scan senantiasa dengan RST, sehingga scanner akan melaporkan Port adalah Close.
 # UDP Port Scanner
 Pada server normalnya layanan UDP adalah terkait dengan DNS dan DHCP, tetapi pada umumnya Pentester melakukan Scan UDP untuk mendapatkan kemungkinan server ada Port UDP yang terbuka karena terinfeksi Malware ataupun Spyware. Jika UDP Scan mendapatkan response ICMP destination UNREACHABLE, maka port adalah Close.
 
