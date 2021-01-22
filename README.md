@@ -78,7 +78,7 @@ iptables -A icmp_flood -j DROP
 #iptables -A INPUT -p icmp -j DROP
 ```
 Fungsi dari perintah iptables -N adalah membuat suatu chain baru, sehingga lebih mudah dimaintain seperti iptables -L syn_flood, maupun iptables -F syn_flood, dan kemudian hasil log dapat dilihat pada /var/log/kern.log.
-# Port Scanner
+# TCP Port Scanner
 Port Scanner merupakan aktvitas untuk mendapatkan informasi terkait dengan Open Port, Closed Port, dan Filtered Port. Menurut RFC 793, untuk TCP segment yang tidak memiliki SYN, ACK, RST, maka server akan merespon RST jika Port adalah Close, dan tidak memberikan respon kalau Port adalah Open. Null Scan, FIN Scan dan XMas Scan melakukan eksploitasi terhadap prilaku ini. Pada NULL scan tidak ada flag yang diset, pada FIN Scan hanya flag FIN yang diset, pada XMas Scan melakukan set terhadap flag URG, PSH, dan FIN. Nill Scan, FIN Scan dan XMAs Scan menggunakan bandwith yang kecil bagi penyerang dan tidak di LOG oleh Sistem Operasi target, tetapi dapat dikenali dengan menggunakan system IDS maupun Firewall. Dengan eksploitasi terhadap RFC 793 respon hanya terkait dengan Port adalah Open atau Close, tetapi bagaimana dengan Filter? disinilah ACK Scan digunakan untuk mengidentifikasi apakah port yang open tersebut dalam keadaan Filtered atau Un-Filtered(keberadaan Firewall), jika ACK Scan dikirim ke server dan tidak ada balasan atau ICMP destination UNREACHABLE maka ada firewall yang menfilter trafik anda, dan sebaliknya server akan mengembalikan RST<br>
 ```
 #batasi fragment package
@@ -107,6 +107,9 @@ iptables -A INPUT -p tcp --tcp-flags ACK,PSH PSH -j port_scan
 iptables -A INPUT -p tcp --tcp-flags ACK,URG URG -j port_scan
 ```
 Bagaimana dengan NMAP scan? NMap menggunakan pendekatan yang halus, yaitu mengakhiri koneksi dengan RST (SYN, SYN=-ACK, RST), sehingga koneksi tidak direkam oleh system operasi target.
+# UDP Port Scanner
+Pada server normalnya layanan UDP adalah terkait dengan DNS dan DHCP, tetapi pada umumnya Pentester melakukan Scan UDP untuk mendapatkan kemungkinan server ada Port UDP yang terbuka karena terinfeksi Malware ataupun Spyware. Jika UDP Scan mendapatkan response ICMP destination UNREACHABLE, maka port adalah Close.
+
 # Pembatasan lainnya
 Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server sampai kepada pembahasan jumlah koneksi per-IPAddress ataupun per-IPAddress per Port<br>
 1. Mengaktifkan Policy Deny pada INPUT Chain & FORWARD Chain
