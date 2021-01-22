@@ -2,7 +2,7 @@
 Pengendalian Server untuk membatasi serangan DDos adalah penting, tetapi secara umum serangan DDoS adalah sulit untuk ditangani, karena menyangkut kepada layanan dari server, terutama serangan DDoS pada layer aplikasi. Pada tulisan ini adalah membahas terkait dengan menangani Flooding pada Port, UDP dan ICMP.<br>
 <br>
 # Syn Flood Attack (a.k.a Half Open Attack)
-Merupakan salah satu modus DDoS serangan cepat yang bertujuan menghabiskan sumber daya koneksi TCP pada server, sehingga tidak dapat melayani koneksi lainnya. Pada koneksi normal klien akan mengajukan permintaan koneksi dengan mengirim paket SYN ke server, kemudian server mengenali permintaan ini dan mengirim SYN-ACK kembali ke klien dan menunggu jawaban ACK dari klien. Pada Syn Flood Attack klien mengirim banyak paket SYN tetapi tidak pernah merespon SYN-ACK, sehingga koneksi pada server menjadi gantung sampai timeout, sampai pada satu level server akan kehabisan sumber daya koneksi untuk melayani koneksi sah lainnya.<br>
+Vin Cerf dan Bob Kahn merancang koneksi TCP dengan teknik three-way-handshake (SYN, SYN-ACK, ACK) jauh hari sebelum ada kejahatan cyber seperti Flood. Flood merupakan salah satu modus DDoS serangan cepat yang bertujuan menghabiskan sumber daya koneksi TCP pada server, sehingga tidak dapat melayani koneksi lainnya. Pada koneksi normal klien akan mengajukan permintaan koneksi dengan mengirim paket SYN ke server, kemudian server mengenali permintaan ini dan mengirim SYN-ACK kembali ke klien dan menunggu jawaban ACK dari klien. Pada Syn Flood Attack klien mengirim banyak paket SYN tetapi tidak pernah merespon SYN-ACK, sehingga koneksi pada server menjadi gantung sampai timeout, sampai pada satu level server akan kehabisan sumber daya koneksi untuk melayani koneksi sah lainnya.<br>
 1. Mengaktifkan syncookies pada file /etc/sysctl.d/10-network-security.conf. Upaya untuk menangani serangan Syn flood adalah sebagai berikut:
 ```
 net.ipv4.tcp_syncookies=1
@@ -79,7 +79,7 @@ iptables -A icmp_flood -j DROP
 ```
 Fungsi dari perintah iptables -N adalah membuat suatu chain baru, sehingga lebih mudah dimaintain seperti iptables -L syn_flood, maupun iptables -F syn_flood, dan kemudian hasil log dapat dilihat pada /var/log/kern.log.
 # Port Scanner
-Port Scanner merupakan aktvitas untuk mendapatkan informasi terkait dengan Open Port, Closed Port, dan Filtered Port.<br>
+Port Scanner merupakan aktvitas untuk mendapatkan informasi terkait dengan Open Port, Closed Port, dan Filtered Port. Menurut RFC 793, untuk TCP segment yang tidak memiliki SYN, ACK, RST, maka server akan merespon RST jika Port adalah Close, dan tidak memberikan respon kalau Port adalah Open. Null Scan, FIN Scan dan XMas Scan melakukan eksploitasi terhadap prilaku ini. Pada NULL scan tidak ada flag yang diset, pada FIN Scan hanya flag FIN yang diset, pada XMas Scan melakukan set terhadap flag URG, PSH, dan FIN. Nill Scan, FIN Scan dan XMAs Scan menggunakan bandwith yang kecil bagi penyerang dan tidak di LOG oleh Sistem Operasi target, tetapi dapat dikenali dengan menggunakan system IDS maupun Firewall.<br>
 ```
 #batasi fragment package
 iptables -A INPUT -f -j DROP
@@ -96,7 +96,6 @@ iptables -A INPUT -p tcp --tcp-flags ALL NONE -j port_scan
 #batasi XMAS SCAN
 iptables -A INPUT -p tcp --tcp-flags ALL ALL -j port_scan
 iptables -A INPUT -p tcp --tcp-flags ALL URG,PSH,FIN -j port_scan
-iptables -A INPUT -p tcp --tcp-flags ALL FIN,PSH,URG -j DROP
 
 #batasi FIN SCAN
 iptables -A INPUT -p tcp --tcp-flags ACK,FIN FIN -j port_scan
