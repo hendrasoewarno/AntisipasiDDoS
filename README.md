@@ -105,11 +105,8 @@ iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN -j port_scan
 #batasi ACK SCAN
 iptables -A INPUT -p tcp --tcp-flags ACK,PSH PSH -j port_scan
 iptables -A INPUT -p tcp --tcp-flags ACK,URG URG -j port_scan
-
-#batasi NMAP-ID SCAN
-iptables -A INPUT -p tcp –tcp-flags ALL URG,PSH,SYN,FIN -j port_scan
-iptables -A INPUT -p tcp –tcp-flags SYN,RST SYN,RST -j port_scan
 ```
+Bagaimana dengan NMAP scan? NMap menggunakan pendekatan yang halus, yaitu mengakhiri koneksi dengan RST (SYN, SYN=-ACK, RST), sehingga koneksi tidak direkam oleh system operasi target.
 # Pembatasan lainnya
 Beberapa contoh terkait dengan pemberdayaan iptables untuk membatasi koneksi ke server sampai kepada pembahasan jumlah koneksi per-IPAddress ataupun per-IPAddress per Port<br>
 1. Mengaktifkan Policy Deny pada INPUT Chain & FORWARD Chain
