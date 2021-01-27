@@ -177,9 +177,16 @@ iptables -I INPUT -p tcp --dport 443 -m length --length 32 -j DROP
 ```
 iptables -A INPUT -i eth0 -p tcp --syn --match multiport --dports 587, 995 -m connlimit --connlimit-above 2 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
 ```
-15. 
+15. Menolak lebih dari 5 koneksi SSH per menit per srcip
 ```
 iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m hashlimit --hashlimit-name SSH --hashlimit-above 5/min --hashlimit-mode srcip -j REJECT
+```
+16. Melakukan log dan block terhadap upaya serangan heartbleep:
+```
+# Log rules
+iptables -t filter -A INPUT -p tcp --dport 443 -m u32 --u32 "52=0x18030000:0x1803FFFF" -j LOG --log-prefix "BLOCKED: HEARTBEAT"
+# Block rules
+iptables -t filter -A INPUT -p tcp --dport 443 -m u32 --u32 "52=0x18030000:0x1803FFFF" -j DROP
 ```
 Selain -A (add) anda dapat juga menggunakan -I (insert), jika -A menambahkan rule baru pada akhir, sedangkan -I menambahkan rule diawal daftar.
 kemudian untuk menampilkan daftar rule aktif pada firewall:
