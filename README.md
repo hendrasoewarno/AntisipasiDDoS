@@ -57,11 +57,13 @@ iptables -A INPUT -p tcp --tcp-flags URG,PSH,SYN URG,PSH,SYN -j DROP
 
 #UDP FLOOD
 iptables -N udp_flood
-iptables -A INPUT -p udp ! --dport 53 -j udp_flood  
+iptables -A INPUT -p udp ! --sport 53 ! --dport 53 -j udp_flood  
+#iptables -A INPUT -p udp -i eth1 ! --sport 53 ! --dport 53 -j udp_flood  
+#iptables -A INPUT -p udp -i eth2 ! --sport 53 ! --dport 53 -j udp_flood  
 iptables -A udp_flood -m state --state NEW –m recent --update --seconds 1 --hitcount 10 -j RETURN  
 iptables -A syn_flood -j LOG --log-prefix "UDP flood: "
 iptables -A udp_flood -j DROP
-#membatasi maksimal 10 koneksi UDP baru per detik, kecuali layanan DNS
+#membatasi maksimal 10 koneksi UDP baru per detik, kecuali layanan DNS masuk dan keluar
 
 #ICMP FLOOD/Smurf Attack
 iptables -N icmp_flood  
