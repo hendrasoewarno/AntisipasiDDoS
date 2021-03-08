@@ -1,8 +1,16 @@
 # Menangani  Distributed Denial of Service (DDoS) dan Port Scanner
 Pengendalian Server untuk membatasi serangan DDos adalah penting, tetapi secara umum serangan DDoS adalah sulit untuk ditangani, karena menyangkut kepada layanan dari server, terutama serangan DDoS pada layer aplikasi. Pada tulisan ini adalah membahas terkait dengan menangani Flooding pada Port, UDP dan ICMP.<br>
 <br>
-# DNS amplification attack
-Serangan DNS amplification attack memanfaatkan DNS server terbuka untuk melakukan tindakan penyerangan DDos dengan mengirim pertanyaan kecil tetapi menghasilkan respon yang besar. Penyerang melakukan spoofing alamat jawaban ke alamat korban, sehingga menyebabkan serangan DDos jika dilakukan dengan Botnet yang banyak.
+# Amplification attack
+Serangan amplification attack memanfaatkan server kita untuk melakukan tindakan penyerangan DDos dengan mengirim pertanyaan kecil tetapi menghasilkan respon yang besar. Penyerang melakukan spoofing alamat jawaban ke alamat korban, sehingga menyebabkan serangan DDos jika dilakukan dengan Botnet yang banyak. Pastikan anda DROP request ke port-port berikut ini, jika server anda tidak menjalankan service terkait.
+```
+iptables -A INPUT -p udp -i eth1 ! -s 8.8.8.8 --dport 53 -j drop
+
+# BitTorrent (6881), CharGEN(19), CLDAP (389), Kad(P2P) (751), Memchaced (11211), MSSQL (1434), Multicast DNS (5353), NetBIOS (137)
+# NTP (123), Portmap (RPCbind) 111, QOTD (17), Quake Network Protocol (27960), RIPv1 (520), SNMP (161), SSDP (1900), Stream Protocol 27015
+
+iptables -A INPUT -p udp -i eth1 --match multiport --dports 6881, 19, 389, 751, 11211, 1434, 5353, 137, 123, 111, 17, 27960, 520, 161, 1900, 27015 -j DROP
+```
 
 # Syn Flood Attack (a.k.a Half Open Attack)
 Vin Cerf dan Bob Kahn merancang koneksi TCP dengan teknik Three-Way-Handshake (SYN, SYN-ACK, ACK) jauh hari sebelum ada kejahatan cyber seperti Flood. Flood merupakan salah satu modus DoS serangan cepat yang bertujuan menghabiskan sumber daya koneksi TCP pada server dengan mengekploitasi Three-Way-Handshake, sehingga tidak dapat melayani koneksi lainnya. Pada koneksi normal klien akan mengajukan permintaan koneksi dengan mengirim paket SYN ke server, kemudian server mengenali permintaan ini dan mengirim SYN-ACK kembali ke klien dan menunggu jawaban ACK dari klien. Pada Syn Flood Attack klien mengirim banyak paket SYN tetapi tidak pernah merespon SYN-ACK, sehingga koneksi pada server menjadi gantung sampai timeout, sampai pada satu level server akan kehabisan sumber daya koneksi untuk melayani koneksi sah lainnya.<br>
