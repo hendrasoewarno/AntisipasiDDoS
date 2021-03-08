@@ -4,6 +4,7 @@ Pengendalian Server untuk membatasi serangan DDos adalah penting, tetapi secara 
 # Amplification attack
 Serangan amplification attack memanfaatkan server kita untuk melakukan tindakan penyerangan DDos dengan mengirim pertanyaan kecil tetapi menghasilkan respon yang besar. Penyerang melakukan spoofing alamat jawaban ke alamat korban, sehingga menyebabkan serangan DDos jika dilakukan dengan Botnet yang banyak. Pastikan anda DROP request ke port-port berikut ini, jika server anda tidak menjalankan service terkait.
 ```
+# Drop trafik dari internet ke UDP 53 yang bukan dari DNS server yang digunakan
 iptables -A INPUT -p udp -i eth1 ! -s 8.8.8.8 --dport 53 -j drop
 
 # BitTorrent (6881), CharGEN(19), CLDAP (389), Kad(P2P) (751), Memchaced (11211), MSSQL (1434), Multicast DNS (5353), NetBIOS (137)
