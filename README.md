@@ -1,6 +1,9 @@
 # Menangani  Distributed Denial of Service (DDoS) dan Port Scanner
 Pengendalian Server untuk membatasi serangan DDos adalah penting, tetapi secara umum serangan DDoS adalah sulit untuk ditangani, karena menyangkut kepada layanan dari server, terutama serangan DDoS pada layer aplikasi. Pada tulisan ini adalah membahas terkait dengan menangani Flooding pada Port, UDP dan ICMP.<br>
 <br>
+# DNS amplification attack
+Serangan DNS amplification attack memanfaatkan DNS server terbuka untuk melakukan tindakan penyerangan DDos dengan mengirim pertanyaan kecil tetapi menghasilkan respon yang besar. Penyerang melakukan spoofing alamat jawaban ke alamat korban, sehingga menyebabkan serangan DDos jika dilakukan dengan Botnet yang banyak.
+
 # Syn Flood Attack (a.k.a Half Open Attack)
 Vin Cerf dan Bob Kahn merancang koneksi TCP dengan teknik Three-Way-Handshake (SYN, SYN-ACK, ACK) jauh hari sebelum ada kejahatan cyber seperti Flood. Flood merupakan salah satu modus DoS serangan cepat yang bertujuan menghabiskan sumber daya koneksi TCP pada server dengan mengekploitasi Three-Way-Handshake, sehingga tidak dapat melayani koneksi lainnya. Pada koneksi normal klien akan mengajukan permintaan koneksi dengan mengirim paket SYN ke server, kemudian server mengenali permintaan ini dan mengirim SYN-ACK kembali ke klien dan menunggu jawaban ACK dari klien. Pada Syn Flood Attack klien mengirim banyak paket SYN tetapi tidak pernah merespon SYN-ACK, sehingga koneksi pada server menjadi gantung sampai timeout, sampai pada satu level server akan kehabisan sumber daya koneksi untuk melayani koneksi sah lainnya.<br>
 1. Mengaktifkan syncookies pada file /etc/sysctl.d/10-network-security.conf. Upaya untuk menangani serangan Syn flood adalah sebagai berikut:
